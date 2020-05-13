@@ -1,21 +1,18 @@
 package main
 
 import (
-
 	"fmt"
-	"module/services"
+	"github.com/jmoiron/sqlx"
+	"todomodule/app"
+	"todomodule/infrastructure/repos/dbRepo"
 )
 
-func main(){
+func main() {
 	fmt.Println("Start program")
-	var toBase services.Repo=new(services.ToBase)
-	var toLocal services.Repo=new(services.ToLocal)
-	todoBase:=services.NewTodos(toBase)
-	todoLocal:=services.NewTodos(toLocal)
-	todoBase.Create("First to Base")
-	todoBase.Create("Second to Base")
-	todoLocal.Create("First to Local")
-	todoLocal.Create("Second to Local")
-	fmt.Println(todoBase.GetAll())
-	fmt.Println(todoLocal.GetAll())
+	db := &sqlx.DB{}
+	repo := dbRepo.NewDbRepo(db)
+	service := app.NewTodos(repo)
+	//service.Create(domain.Todo{"Something first"})
+	//service.Create(domain.Todo{"Anything else"})
+	fmt.Println(service.GetAll())
 }
