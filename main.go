@@ -3,8 +3,13 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"github.com/jmoiron/sqlx"
+	"log"
+	"todomodule/app"
 	"todomodule/domain"
+	"todomodule/infrastructure/repos/dbRepo"
 	"todomodule/infrastructure/repos/memRepo"
+	"todomodule/pkg/config"
 )
 
 // TODO Добавить UNIQUE в todo ---------
@@ -12,30 +17,38 @@ import (
 // TODO Убрать хардкод defaultConnStr, defaultDriverName. Добавить поле для коннекта в config.json
 // TODO Создать package httphandlers в infractructure. В нем должен быть тип TodoHandlers struct. TodoHandlers
 // будет обрабатывать http запросы. POST на CreateTodo и Get на GetAll. Нужно запустить сервер на localhost:8080
-
-var defaultConnStr string = "user=postgres password=wizard dbname=postgres sslmode=disable"
-var defaultDriverName string = "postgres"
+//
+//var defaultConnStr string = "user=postgres password=wizard dbname=postgres sslmode=disable"
+//var defaultDriverName string = "postgres"
 
 func main() {
 	fmt.Println("Start program")
-	////ClearAllDb()
-	//db, err := sqlx.Connect(defaultDriverName, defaultConnStr)
-	//if err != nil {
-	//	log.Fatalln(err)
-	//}
-	//repo, err := dbRepo.NewDbRepo(db)
-	//if err != nil {
-	//	log.Fatalln(err)
-	//}
-	//service := app.NewTodos(repo)
-	//service.Create(domain.Todo{"Something first"})
-	//service.Create(domain.Todo{"Anything else"})
-	//
-	//fmt.Println(service.GetAll())
-	repo := memRepo.NewMemRepo()
-	repo.Create(domain.Todo{"First"})
-	repo.Create(domain.Todo{"Second"})
-	fmt.Println(repo.GetAll())
+	cfg, err := config.GetConfig()
+	if err != nil {
+		panic(err)
+	}
+
+	//ClearAllDb()
+	db, err := sqlx.Connect(cfg.DriverName, cfg.DataSourceName)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	repo, err := dbRepo.NewDbRepo(db)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	service := app.NewTodos(repo)
+	service.Create(domain.Todo{"Something first"})
+	service.Create(domain.Todo{"Anything else"})
+	service.Create(domain.Todo{"Anything else"})
+	service.Create(domain.Todo{"Anything something else"})
+	fmt.Println(service.GetAll())
+	repoMem := memRepo.NewMemRepo()
+	repoMem.Create(domain.Todo{"First"})
+	repoMem.Create(domain.Todo{"Second"})
+	repoMem.Create(domain.Todo{"third"})
+	repoMem.Create(domain.Todo{"third"})
+	fmt.Println(repoMem.GetAll())
 
 }
 
