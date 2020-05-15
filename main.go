@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"log"
+	"net/http"
 	"todomodule/app"
 	"todomodule/domain"
+	"todomodule/infrastructure/httphandlers"
 	"todomodule/infrastructure/repos/dbRepo"
 	"todomodule/infrastructure/repos/memRepo"
 	"todomodule/pkg/config"
@@ -14,7 +16,7 @@ import (
 
 // TODO Добавить UNIQUE в todo ---------
 // TODO Добавить inmmemo repo с mutex и map --------
-// TODO Убрать хардкод defaultConnStr, defaultDriverName. Добавить поле для коннекта в config.json
+// TODO Убрать хардкод defaultConnStr, defaultDriverName. Добавить поле для коннекта в config.json -----
 // TODO Создать package httphandlers в infractructure. В нем должен быть тип TodoHandlers struct. TodoHandlers
 // будет обрабатывать http запросы. POST на CreateTodo и Get на GetAll. Нужно запустить сервер на localhost:8080
 //
@@ -49,7 +51,8 @@ func main() {
 	repoMem.Create(domain.Todo{"third"})
 	repoMem.Create(domain.Todo{"third"})
 	fmt.Println(repoMem.GetAll())
-
+	http.HandleFunc("/", httphandlers.HelloServer)
+	http.ListenAndServe(":8080", nil)
 }
 
 func ClearAllDb() {
