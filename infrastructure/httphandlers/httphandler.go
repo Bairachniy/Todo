@@ -2,7 +2,6 @@ package httphandlers
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"todomodule/app"
 	"todomodule/domain"
@@ -13,7 +12,18 @@ type httpHandler struct {
 }
 
 func NewHttpHandler(todo *app.Todos) httpHandler {
-	http.HandleFunc("/", HelloServer)
+	http.HandleFunc("/create", func(w http.ResponseWriter, r *http.Request) {
+		todo.Create(domain.Todo{r.URL.Query().Get("todo")})
+	})
+	http.HandleFunc("/getall", func(w http.ResponseWriter, r *http.Request) {
+		all, err := todo.GetAll()
+		if err != nil {
+			panic(err)
+		}
+		for value, index := range all {
+			fmt.Fprintf(w, "%s,%s", index, value)
+		}
+	})
 	fmt.Println("Server is listening...")
 	http.ListenAndServe(":8080", nil)
 	return httpHandler{todo: todo}
@@ -32,28 +42,10 @@ func HelloServer(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello, %s!", r.URL.Path[1:])
 }
 
+//func CreateTodo(w http.ResponseWriter, r *http.Request, todo *){
 //
-//func (h Handler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-//	fmt.Fprint(resp, h.Message)
 //}
-
-// функция добавления данных
-
-func CreateHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
-
-		err := r.ParseForm()
-		if err != nil {
-			log.Println(err)
-		}
-
-		//_________________________________________________________
-		http.Redirect(w, r, "/", 301)
-	} else {
-		http.ServeFile(w, r, "templates/todo.html")
-	}
-}
-
-func IndexHandler(w http.ResponseWriter, r *http.Request) {
-
-}
+//
+//func (h httpHandler)GetAllTodo(w http.ResponseWriter, r *http.Request)  {
+//
+//}
