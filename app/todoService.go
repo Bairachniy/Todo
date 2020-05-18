@@ -13,6 +13,7 @@ func NewTodos(repo Repo) *Todos {
 func (t *Todos) Create(todo domain.Todo) error {
 	return t.repo.Create(todo)
 }
+
 func (t *Todos) GetAll() ([]domain.Todo, error) {
 	return t.repo.GetAll()
 }

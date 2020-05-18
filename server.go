@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"log"
+	"net/http"
 	"todomodule/app"
-	"todomodule/domain"
 	"todomodule/infrastructure/httphandlers"
 	"todomodule/infrastructure/repos/dbRepo"
 	"todomodule/pkg/config"
@@ -27,5 +27,7 @@ func main() {
 	}
 	service := app.NewTodos(repo)
 	handle := httphandlers.NewHttpHandler(service)
-	handle.Create(domain.Todo{"From http 3"})
+	http.HandleFunc("/create", handle.CreateTodo)
+	http.HandleFunc("/getall", handle.GetAllTodo)
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }

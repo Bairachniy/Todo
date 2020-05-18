@@ -26,7 +26,8 @@ func (r dbRepo) MakeUniqueTodoQuery() error {
 }
 func (r dbRepo) Create(todo domain.Todo) error {
 	// TODO Добавить on conflict
-	_, err := r.db.Exec(`INSERT INTO todos (todo) VALUES ($1)`, todo.Name)
+	_, err := r.db.Exec(`
+	INSERT INTO todos (todo) VALUES ($1) on conflict do nothing`, todo.Name)
 	return err
 }
 func (r dbRepo) GetAll() ([]domain.Todo, error) {
