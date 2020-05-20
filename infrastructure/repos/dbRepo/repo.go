@@ -20,12 +20,26 @@ type dbRepo struct {
 	db *sqlx.DB
 }
 
+func (r dbRepo) Update(todoNew domain.Todo, todoOld domain.Todo) error {
+	_, err := r.db.Exec(`
+	UPDATE todos
+	SET todo=$1
+	WHERE
+	todo=$2;`, todoNew.Name, todoOld.Name)
+	return err
+}
+
+func (r dbRepo) Delete(todo domain.Todo) error {
+	_, err := r.db.Exec(`
+	DELETE FROM todos WHERE todo=($1)`, todo.Name)
+	return err
+}
+
 func (r dbRepo) MakeUniqueTodoQuery() error {
 	_, err := r.db.Exec(makeunique)
 	return err
 }
 func (r dbRepo) Create(todo domain.Todo) error {
-	// TODO Добавить on conflict
 	_, err := r.db.Exec(`
 	INSERT INTO todos (todo) VALUES ($1) on conflict do nothing`, todo.Name)
 	return err
