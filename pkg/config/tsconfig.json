@@ -1,0 +1,4 @@
+{
+  "DataSourceName": "user=postgres password=Qaz54321 dbname=postgres sslmode=disable",
+  "DriverName": "postgres"
+}
