@@ -10,54 +10,19 @@ import (
 )
 
 type httpHandler struct {
-	todo *app.Todos
+	todo app.TodoService
 }
 
 type httpTodo struct {
+	ID   string `json:"id"`
 	Name string `json:"name"`
 }
-type udateTodo struct {
-	OldName string `json:"old"`
-	NewName string `json:"new"`
-}
 
-func NewHttpHandler(todo *app.Todos) httpHandler {
+func NewHttpHandler(todo app.TodoService) httpHandler {
 	httpHandler := httpHandler{todo: todo}
 	return httpHandler
 }
 
-//func (h *httpHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
-//	var todo httpTodo
-//	err := json.NewDecoder(r.Body).Decode(&todo)
-//	if err != nil {
-//		w.WriteHeader(http.StatusBadRequest)
-//		return
-//	}
-//	err = h.todo.Create(domain.Todo{
-//		Name: todo.Name,
-//	})
-//	if err != nil {
-//		w.WriteHeader(http.StatusInternalServerError)
-//		return
-//	}
-//	w.WriteHeader(http.StatusOK)
-//}
-
-//func (h httpHandler) GetAllTodo(w http.ResponseWriter, r *http.Request) {
-//	all, err := h.todo.GetAll()
-//	if err != nil {
-//		w.WriteHeader(http.StatusInternalServerError)
-//		return
-//	}
-//	var b bytes.Buffer
-//	err = json.NewEncoder(&b).Encode(all)
-//	if err != nil {
-//		w.WriteHeader(http.StatusInternalServerError)
-//		return
-//	}
-//	w.WriteHeader(http.StatusOK)
-//	w.Write(b.Bytes())
-//}
 func (h *httpHandler) CreateTodo(c echo.Context) error {
 	var todo httpTodo
 	if err := json.NewDecoder(c.Request().Body).Decode(&todo); err != nil {
@@ -72,36 +37,39 @@ func (h *httpHandler) CreateTodo(c echo.Context) error {
 	return c.JSON(http.StatusCreated, todo)
 }
 func (h httpHandler) GetAllTodo(c echo.Context) error {
-	all, err := h.todo.GetAll()
+	todos, err := h.todo.GetAll()
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError)
 	}
 	var b bytes.Buffer
-	err = json.NewEncoder(&b).Encode(all)
+	err = json.NewEncoder(&b).Encode(todos)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError)
 	}
-	return c.JSON(http.StatusOK, all)
+	return c.JSON(http.StatusOK, h.toHTTPTodo(todos))
 }
-func (h httpHandler) DeleteTodo(c echo.Context) error {
-	var todo httpTodo
-	if err := json.NewDecoder(c.Request().Body).Decode(&todo); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError)
+
+func (h httpHandler) toHTTPTodo(todos []domain.Todo) []httpTodo {
+	httpTodos := make([]httpTodo, 0, len(todos))
+	for i := range todos {
+		httpTodos := append(httpTodos, httpTodo{
+			ID:   todos[i].ID(),
+			Name: todos[i].Name(),
+		})
 	}
+	return httpTodos
+}
+
+func (h httpHandler) DeleteTodo(c echo.Context) error {
+	todoName := c.Param("name")
 	if err := h.todo.Delete(domain.Todo{
-		Name: todo.Name,
+		Name: todoName,
 	}); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError)
 	}
-	return c.JSON(http.StatusOK, todo)
+	return c.NoContent(http.StatusOK)
 }
 
-//{
-//	"update":{
-//		"old":"Tratata",
-//		"new":"Pamparirurai"
-//	}
-//}
 func (h httpHandler) UpdateTodo(c echo.Context) error {
 	m := make(map[string]udateTodo)
 	if err := json.NewDecoder(c.Request().Body).Decode(&m); err != nil {

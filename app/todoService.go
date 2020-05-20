@@ -6,20 +6,37 @@ type Todos struct {
 	repo Repo
 }
 
-func (t *Todos) Update(todoNew domain.Todo, todoOld domain.Todo) error {
-	return t.repo.Update(todoNew, todoOld)
+type CreateTodoCommand struct {
+	Name string
 }
 
-func (t *Todos) Delete(todo domain.Todo) error {
-	return t.repo.Delete(todo)
+type UpdateTodoCommand struct {
+	ID   string
+	Name string
 }
 
 func NewTodos(repo Repo) *Todos {
 	return &Todos{repo: repo}
 }
 
-func (t *Todos) Create(todo domain.Todo) error {
+func (t *Todos) Create(todoCmd CreateTodoCommand) error {
+	todo, err := domain.NewTodo(todoCmd.Name)
+	if err != nil {
+		return err
+	}
 	return t.repo.Create(todo)
+}
+
+func (t *Todos) Update(todoCmd UpdateTodoCommand) error {
+	todo, err := domain.ParseTodo(todoCmd.ID, todoCmd.Name)
+	if err != nil {
+		return err
+	}
+	return t.repo.Update(todo)
+}
+
+func (t *Todos) Delete(id string) error {
+	return t.repo.Delete(id)
 }
 
 func (t *Todos) GetAll() ([]domain.Todo, error) {
