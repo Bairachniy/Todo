@@ -13,17 +13,17 @@ type memRepo struct {
 	m    sync.Mutex
 }
 
-func (m memRepo) Update(todoNew domain.Todo, todoOld domain.Todo) error {
-	m.Delete(todoOld)
+func (m memRepo) Update(todo domain.Todo) error {
+	m.Delete(todo.ID())
 	m.m.Lock()
-	m.todo[todoNew.Name] = todoNew
+	m.todo[todo.Name()] = todo
 	m.m.Unlock()
 	return nil
 }
 
-func (m memRepo) Delete(todo domain.Todo) error {
+func (m memRepo) Delete(id string) error {
 	m.m.Lock()
-	delete(m.todo, todo.Name)
+	delete(m.todo, id)
 	m.m.Unlock()
 	return nil
 }
@@ -40,7 +40,7 @@ func (m memRepo) GetAll() ([]domain.Todo, error) {
 
 func (m memRepo) Create(todo domain.Todo) error {
 	m.m.Lock()
-	m.todo[todo.Name] = todo
+	m.todo[todo.Name()] = todo
 	m.m.Unlock()
 	return nil
 }

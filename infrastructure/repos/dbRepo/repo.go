@@ -3,6 +3,7 @@ package dbRepo
 import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+	"strconv"
 	"todomodule/app"
 	"todomodule/domain"
 )
@@ -20,18 +21,18 @@ type dbRepo struct {
 	db *sqlx.DB
 }
 
-func (r dbRepo) Update(todoNew domain.Todo, todoOld domain.Todo) error {
+func (r dbRepo) Update(todo domain.Todo) error {
 	_, err := r.db.Exec(`
 	UPDATE todos
 	SET todo=$1
 	WHERE
-	todo=$2;`, todoNew.Name, todoOld.Name)
+	id=$2;`, todo.Name(), todo.ID())
 	return err
 }
 
-func (r dbRepo) Delete(todo domain.Todo) error {
+func (r dbRepo) Delete(id string) error {
 	_, err := r.db.Exec(`
-	DELETE FROM todos WHERE todo=($1)`, todo.Name)
+	DELETE FROM todos WHERE id=($1)`, id)
 	return err
 }
 
@@ -41,16 +42,19 @@ func (r dbRepo) MakeUniqueTodoQuery() error {
 }
 func (r dbRepo) Create(todo domain.Todo) error {
 	_, err := r.db.Exec(`
-	INSERT INTO todos (todo) VALUES ($1) on conflict do nothing`, todo.Name)
+	INSERT INTO todos (todo) VALUES ($1) on conflict do nothing`, todo.Name())
 	return err
 }
 func (r dbRepo) GetAll() ([]domain.Todo, error) {
 	var todos []Todo
 	err := r.db.Select(&todos, "select * from todos")
-
 	domainTodos := make([]domain.Todo, 0, len(todos))
 	for i := range todos {
-		domainTodos = append(domainTodos, domain.Todo{Name: todos[i].Name})
+		tmp, err := domain.ParseTodo(strconv.Itoa(todos[i].ID), todos[i].Name)
+		if err != nil {
+			panic(err)
+		}
+		domainTodos = append(domainTodos, tmp)
 	}
 	return domainTodos, err
 }
