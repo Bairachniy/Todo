@@ -1,4 +1,4 @@
-package dbRepo
+package dbrepo
 
 type Todo struct {
 	ID   int    `db:"id"`

@@ -4,14 +4,12 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo"
-	//"github.com/labstack/echo/middleware"
-	"log"
-	//"net/http"
-	"todomodule/infrastructure/httphandlers"
-	//"github.com/labstack/echo/v4"
 	"todomodule/app"
+	"todomodule/infrastructure/httphandlers"
 
-	"todomodule/infrastructure/repos/dbRepo"
+	"log"
+
+	"todomodule/infrastructure/repos/dbrepo"
 	"todomodule/pkg/config"
 )
 
@@ -25,21 +23,21 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	repo, err := dbRepo.NewDbRepo(db)
+	repo, err := dbrepo.NewDbRepo(db)
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	dbRepo := app.NewTodos(repo)
+
+	fmt.Println(dbRepo.GetAll())
+
 	service := app.NewTodos(repo)
-	handle := httphandlers.NewHttpHandler(service)
+	handle := httphandlers.NewHTTPHandler(service)
 	e := echo.New()
 	e.POST("/todos", handle.CreateTodo)
 	e.POST("/todos/:id", handle.UpdateTodo)
 	e.GET("/todos", handle.GetAllTodo)
-	e.DELETE("/todos/:name", handle.DeleteTodo)
+	e.DELETE("/todos/:id", handle.DeleteTodo)
 	e.Logger.Fatal(e.Start(":8080"))
-
-	//http.HandleFunc("/create", handle.CreateTodo)
-	//http.HandleFunc("/getall", handle.GetAllTodo)
-	//log.Fatal(http.ListenAndServe(":8080", nil))
-	//fmt.Println("End of program")
 }

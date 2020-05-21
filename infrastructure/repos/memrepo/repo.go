@@ -1,4 +1,4 @@
-package memRepo
+package memrepo
 
 import (
 	"sync"
@@ -13,23 +13,22 @@ type memRepo struct {
 	m    sync.Mutex
 }
 
-func (m memRepo) Update(todoNew domain.Todo, todoOld domain.Todo) error {
-	m.Delete(todoOld)
+func (m *memRepo) Update(todo domain.Todo) error {
 	m.m.Lock()
-	m.todo[todoNew.Name] = todoNew
+	m.todo[todo.ID()] = todo
 	m.m.Unlock()
 	return nil
 }
 
-func (m memRepo) Delete(todo domain.Todo) error {
+func (m *memRepo) Delete(id string) error {
 	m.m.Lock()
-	delete(m.todo, todo.Name)
+	delete(m.todo, id)
 	m.m.Unlock()
 	return nil
 }
 
-func (m memRepo) GetAll() ([]domain.Todo, error) {
-	todoTmp := []domain.Todo{}
+func (m *memRepo) GetAll() ([]domain.Todo, error) {
+	todoTmp := make([]domain.Todo, 0, len(m.todo))
 	m.m.Lock()
 	for k := range m.todo {
 		todoTmp = append(todoTmp, m.todo[k])
@@ -38,9 +37,9 @@ func (m memRepo) GetAll() ([]domain.Todo, error) {
 	return todoTmp, nil
 }
 
-func (m memRepo) Create(todo domain.Todo) error {
+func (m *memRepo) Create(todo domain.Todo) error {
 	m.m.Lock()
-	m.todo[todo.Name] = todo
+	m.todo[todo.ID()] = todo
 	m.m.Unlock()
 	return nil
 }
