@@ -6,8 +6,8 @@ import (
 )
 
 type Config struct {
-	DataSourceName string `env:dataSourceName`
-	DriverName     string `env:driverName`
+	DataSourceName string `env:"DSD"`
+	DriverName     string `env:"DRIVER_NAME"`
 }
 
 func GetConfig() (Config, error) {
@@ -15,8 +15,6 @@ func GetConfig() (Config, error) {
 	decoder := json.NewDecoder(file)
 	config := new(Config)
 	err := decoder.Decode(&config)
-	//if err != nil {
-	//	panic(err)
-	//}
+
 	return *config, err
 }

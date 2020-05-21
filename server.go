@@ -7,10 +7,9 @@ import (
 	"todomodule/app"
 	"todomodule/infrastructure/httphandlers"
 
-	//"github.com/labstack/echo/middleware"
 	"log"
 
-	"todomodule/infrastructure/repos/dbRepo"
+	"todomodule/infrastructure/repos/dbrepo"
 	"todomodule/pkg/config"
 )
 
@@ -24,25 +23,21 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	repo, err := dbRepo.NewDbRepo(db)
+	repo, err := dbrepo.NewDbRepo(db)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	//uptodo:=app.UpdateTodoCommand{ID: "81",Name: "udated"}
-	//if err != nil {
-	//	log.Fatalln(err)
-	//}
-	dbrepo := app.NewTodos(repo)
-	dbrepo.Delete("81")
-	fmt.Println(dbrepo.GetAll())
+
+	dbRepo := app.NewTodos(repo)
+
+	fmt.Println(dbRepo.GetAll())
 
 	service := app.NewTodos(repo)
-	handle := httphandlers.NewHttpHandler(service)
+	handle := httphandlers.NewHTTPHandler(service)
 	e := echo.New()
 	e.POST("/todos", handle.CreateTodo)
 	e.POST("/todos/:id", handle.UpdateTodo)
 	e.GET("/todos", handle.GetAllTodo)
-	e.DELETE("/todos/:name", handle.DeleteTodo)
-	e.Logger.Fatal(e.Start(":8080"))
-
+	e.DELETE("/todos/:id", handle.DeleteTodo)
+	e.Logger.Fatal(e.Start(":8070"))
 }

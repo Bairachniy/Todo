@@ -11,7 +11,7 @@ type Todo struct {
 }
 
 func ParseTodo(id, name string) (Todo, error) {
-	if len(name) == 0 || len(name) > 100 {
+	if name == "" || len(name) > 100 {
 		return Todo{}, ErrInvalidTodoName
 	}
 	return Todo{
@@ -21,7 +21,7 @@ func ParseTodo(id, name string) (Todo, error) {
 }
 
 func NewTodo(name string) (Todo, error) {
-	if len(name) == 0 || len(name) > 100 {
+	if name == "" || len(name) > 100 {
 		return Todo{}, ErrInvalidTodoName
 	}
 	return Todo{

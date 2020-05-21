@@ -9,7 +9,7 @@ import (
 	"todomodule/domain"
 )
 
-type httpHandler struct {
+type HTTPHandler struct {
 	todo app.TodoService
 }
 
@@ -18,12 +18,12 @@ type httpTodo struct {
 	Name string `json:"name"`
 }
 
-func NewHttpHandler(todo app.TodoService) httpHandler {
-	httpHandler := httpHandler{todo: todo}
+func NewHTTPHandler(todo app.TodoService) HTTPHandler {
+	httpHandler := HTTPHandler{todo: todo}
 	return httpHandler
 }
 
-func (h *httpHandler) CreateTodo(c echo.Context) error {
+func (h *HTTPHandler) CreateTodo(c echo.Context) error {
 	var todo httpTodo
 	if err := json.NewDecoder(c.Request().Body).Decode(&todo); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError)
@@ -34,7 +34,7 @@ func (h *httpHandler) CreateTodo(c echo.Context) error {
 	}
 	return c.JSON(http.StatusCreated, todo)
 }
-func (h httpHandler) GetAllTodo(c echo.Context) error {
+func (h HTTPHandler) GetAllTodo(c echo.Context) error {
 	todos, err := h.todo.GetAll()
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError)
@@ -47,7 +47,7 @@ func (h httpHandler) GetAllTodo(c echo.Context) error {
 	return c.JSON(http.StatusOK, h.toHTTPTodo(todos))
 }
 
-func (h httpHandler) toHTTPTodo(todos []domain.Todo) []httpTodo {
+func (h HTTPHandler) toHTTPTodo(todos []domain.Todo) []httpTodo {
 	httpTodos := make([]httpTodo, 0, len(todos))
 	for i := range todos {
 		httpTodos = append(httpTodos, httpTodo{
@@ -58,16 +58,15 @@ func (h httpHandler) toHTTPTodo(todos []domain.Todo) []httpTodo {
 	return httpTodos
 }
 
-func (h httpHandler) DeleteTodo(c echo.Context) error {
-
-	id := c.Param("name")
+func (h HTTPHandler) DeleteTodo(c echo.Context) error {
+	id := c.Param("id")
 	if err := h.todo.Delete(id); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError)
 	}
 	return c.NoContent(http.StatusOK)
 }
 
-func (h httpHandler) UpdateTodo(c echo.Context) error {
+func (h HTTPHandler) UpdateTodo(c echo.Context) error {
 	var m app.UpdateTodoCommand
 	m.ID = c.Param("id")
 	if err := json.NewDecoder(c.Request().Body).Decode(&m); err != nil {
