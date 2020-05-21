@@ -60,7 +60,7 @@ func (h httpHandler) toHTTPTodo(todos []domain.Todo) []httpTodo {
 
 func (h httpHandler) DeleteTodo(c echo.Context) error {
 
-	id := c.Param("name")
+	id := c.Param("id")
 	if err := h.todo.Delete(id); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError)
 	}

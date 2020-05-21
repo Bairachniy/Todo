@@ -42,7 +42,7 @@ func main() {
 	e.POST("/todos", handle.CreateTodo)
 	e.POST("/todos/:id", handle.UpdateTodo)
 	e.GET("/todos", handle.GetAllTodo)
-	e.DELETE("/todos/:name", handle.DeleteTodo)
+	e.DELETE("/todos/:id", handle.DeleteTodo)
 	e.Logger.Fatal(e.Start(":8080"))
 
 }
