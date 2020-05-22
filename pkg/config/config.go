@@ -6,7 +6,7 @@ import (
 )
 
 type Config struct {
-	DataSourceName string `env:"DSD"`
+	DataSourceName string `env:"DSN"`
 	DriverName     string `env:"DRIVER_NAME"`
 }
 

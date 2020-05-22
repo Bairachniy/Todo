@@ -9,6 +9,7 @@ import (
 
 	"log"
 
+	_ "github.com/lib/pq"
 	"todomodule/infrastructure/repos/dbrepo"
 	"todomodule/pkg/config"
 )
@@ -23,7 +24,7 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	repo, err := dbrepo.NewDbRepo(db)
+	repo, err := dbrepo.NewDBRepo(db)
 	if err != nil {
 		log.Fatalln(err)
 	}

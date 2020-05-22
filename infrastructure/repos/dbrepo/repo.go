@@ -59,7 +59,7 @@ func (r dbRepo) GetAll() ([]domain.Todo, error) {
 	return domainTodos, err
 }
 
-func NewDbRepo(db *sqlx.DB) (app.Repo, error) {
+func NewDBRepo(db *sqlx.DB) (app.Repo, error) {
 	_, err := db.Exec(schema)
 	return &dbRepo{db: db}, err
 }
