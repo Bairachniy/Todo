@@ -1,6 +1,6 @@
 package dbrepo
 
 type Todo struct {
-	ID   int    `db:"id"`
+	ID   string `db:"id"`
 	Name string `db:"todo"`
 }
