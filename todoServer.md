@@ -40,12 +40,3 @@
 >Method GET
 >
 >Path **/todos**
->
->Response body
->```json5
-[
-{
-    "name":"New todo"
-}
-]
-```

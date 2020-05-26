@@ -1,4 +1,4 @@
 {
-  "DataSourceName": "user=postgres password=Qaz54321 dbname=postgres sslmode=disable",
+  "DataSourceName": "postgres://postgres:wizard@localhost:5432/postgres?sslmode=disable",
   "DriverName": "postgres"
 }
