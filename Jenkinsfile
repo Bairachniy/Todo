@@ -3,7 +3,7 @@
     stages {
         stage('build') {
             steps {
-                sh 'go version'
+                sh 'go run server.go'
             }
         }
     }
