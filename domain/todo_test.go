@@ -12,3 +12,17 @@ func TestNewTodo(t *testing.T) {
 		t.Error("expected the same name in todo")
 	}
 }
+
+func TestParseTodo(t *testing.T) {
+	actual, err := ParseTodo("123", "Test todo")
+	if err != nil {
+		panic(err)
+	}
+	expected := Todo{
+		id:   "123",
+		name: "Test todo",
+	}
+	if actual != expected {
+		t.Error("something wrong!!")
+	}
+}
