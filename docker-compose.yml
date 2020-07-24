@@ -1,20 +1,20 @@
 version: '3.3'
 
 services:
-  app:
   backend:
-    build: ./backend
-    ports:
-      -  "8080:8080"
+    build: .
+    image: tododbserver
+    restart: always
     env_file:
-      - backend/.env
+      - .env
+    ports:
+      - "8080:8080"
     depends_on:
       - postgres
-    restart: unless-stopped
-  postgres:
-    container_name: postgresql
-    image: postgres:12.2
 
+  postgres:
+    image: postgres
+    container_name: postgresql
     environment:
       POSTGRES_DB: 'postgres'
       POSTGRES_USER: 'postgres'
