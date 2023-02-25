@@ -46,18 +46,15 @@ github.com/valyala/bytebufferpool
 # github.com/valyala/fasttemplate v1.1.0
 ## explicit
 github.com/valyala/fasttemplate
-# golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37
+# golang.org/x/crypto v0.1.0
 ## explicit
 golang.org/x/crypto/acme
 golang.org/x/crypto/acme/autocert
-# golang.org/x/net v0.0.0-20200513185701-a91f0712d120
-## explicit
+# golang.org/x/net v0.1.0
 golang.org/x/net/idna
-# golang.org/x/sys v0.0.0-20200515095857-1151b9dac4a9
-## explicit
-golang.org/x/sys/internal/unsafeheader
+# golang.org/x/sys v0.1.0
 golang.org/x/sys/unix
-# golang.org/x/text v0.3.2
+# golang.org/x/text v0.4.0
 golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
